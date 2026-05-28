@@ -18,5 +18,7 @@ public class UserDTOIn {
     private String cpf;
     private String email;
     private String password;
+    private TypeUser typeUser = TypeUser.COMMOM;
+    private BigDecimal balance = BigDecimal.ZERO;
 
 }
