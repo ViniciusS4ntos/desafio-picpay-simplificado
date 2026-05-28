@@ -1,5 +1,6 @@
 package com.vinicius.PicPaySimplificado.service;
 
+import com.vinicius.PicPaySimplificado.infras.entities.Transaction;
 import com.vinicius.PicPaySimplificado.infras.entities.User;
 import com.vinicius.PicPaySimplificado.infras.entities.enums.TypeUser;
 import com.vinicius.PicPaySimplificado.infras.repositorys.TransactionRepository;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +35,23 @@ public class UserService {
 
     }
 
+    public List<Transaction> listarTransacoes(Integer id){
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("id nao encontrado!"));
+        return user.getSentTransactions();
+
+    }
+
+    public User botarDinheiro(BigDecimal balance, Integer id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Id nao encontrado!"));
+
+        user.setBalance(user.getBalance().add(balance));
+        return userRepository.save(user);
+    }
+
 
     // Formata CPF
-    public String formataCpf(String cpf){
+    private String formataCpf(String cpf){
 
         String cpfFormatado = cpf.replaceAll("[^0-9]", "");
 
@@ -52,7 +68,7 @@ public class UserService {
     }
 
     // VERIFICAR email existe no banco
-    public Boolean emailExistente(String email){
+    private Boolean emailExistente(String email){
         return userRepository.existsByEmail(email);
     }
 
