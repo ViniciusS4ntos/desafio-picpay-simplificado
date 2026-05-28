@@ -1,9 +1,12 @@
 package com.vinicius.PicPaySimplificado.infras.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity(name = "transactions")
 @Table(name = "transactions")
@@ -18,13 +21,17 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    private User sender;
+    @Column(name = "sender_id")
+    private Integer sender;
 
-    @ManyToOne
-    private User receiver;
+    @Column(name = "receiver_id")
+    private Integer receiver;
 
     private BigDecimal amount;
+
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 
 
 }
