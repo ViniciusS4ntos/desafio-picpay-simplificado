@@ -1,13 +1,16 @@
 package com.vinicius.PicPaySimplificado.infras.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vinicius.PicPaySimplificado.infras.entities.enums.TypeUser;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity(name = "Users")
-@Table(name = "Users")
+@Entity(name = "users")
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -19,25 +22,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 255, nullable = false)
     private String firstName;
-
-    @Column(length = 255, nullable = false)
     private String lastName;
-
-    @Column(length = 11, nullable = false, unique = true)
     private String cpf;
-
-    @Column(unique = true, nullable = false)
     private String email;
-
-    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     private TypeUser typeUser;
 
-    @Column(nullable = false)
-    private BigDecimal balance;
+    @OneToMany(mappedBy = "sender")
+    @JsonIgnore
+    private List<Transaction> sentTransactions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "receiver")
+    @JsonIgnore
+    private List<Transaction> receivedTransactions = new ArrayList<>();
+
+    private BigDecimal balance;
 }
