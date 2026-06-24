@@ -30,8 +30,8 @@ public class TransactionService {
         User received = userRepository.findByCpf(userService.formataCpf(cpf));
 
         Transaction transaction = new Transaction();
-        transaction.setSender(sender);
-        transaction.setReceiver(received);
+        transaction.setSender(sender.getId());
+        transaction.setReceiver(received.getId());
         transaction.setAmount(balance);
 
 

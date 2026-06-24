@@ -22,10 +22,10 @@ public class Transaction {
     private Integer id;
 
     @Column(name = "sender_id")
-    private User sender;
+    private Integer sender;
 
     @Column(name = "receiver_id")
-    private User receiver;
+    private Integer receiver;
 
     private BigDecimal amount;
 

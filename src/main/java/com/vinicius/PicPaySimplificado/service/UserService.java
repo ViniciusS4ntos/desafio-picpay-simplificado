@@ -27,6 +27,17 @@ public class UserService {
 
         // formata cpf
         user.setCpf(formataCpf(user.getCpf()));
+
+        if (userRepository.existsByCpf(user.getCpf())){
+            throw new RuntimeException("Cpf ja existente no banco");
+        }
+
+        if (user.getCpf().length() == 11){
+
+        } else {
+            throw new RuntimeException("Cpf invalido!");
+        }
+
         if (!emailExistente(user.getEmail())){
 
             user.setBalance(BigDecimal.ZERO);
@@ -82,18 +93,7 @@ public class UserService {
     // Formata CPF
     public String formataCpf(String cpf){
 
-        String cpfFormatado = cpf.replaceAll("[^0-9]", "");
-
-        if (userRepository.existsByCpf(cpfFormatado)){
-            throw new RuntimeException("Cpf ja existente no banco");
-        }
-
-        if (cpfFormatado.length() == 11){
-            return cpfFormatado;
-        } else {
-            throw new RuntimeException("Cpf invalido!");
-        }
-
+        return cpf.replaceAll("[^0-9]", "");
     }
 
     // VERIFICAR email existe no banco
