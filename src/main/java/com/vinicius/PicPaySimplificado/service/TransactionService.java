@@ -5,6 +5,7 @@ import com.vinicius.PicPaySimplificado.infras.entities.User;
 import com.vinicius.PicPaySimplificado.infras.entities.enums.TypeUser;
 import com.vinicius.PicPaySimplificado.infras.repositorys.TransactionRepository;
 import com.vinicius.PicPaySimplificado.infras.repositorys.UserRepository;
+import com.vinicius.PicPaySimplificado.infras.security.JwtService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,22 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final UserService userService;
 
     @Transactional
-    public Transaction criarTransferencia(Transaction transaction) {
+    public Transaction criarTransferencia(String token, BigDecimal balance, String cpf) {
 
-        User receveid = userRepository.findById(transaction.getReceiver()).orElseThrow(() -> new RuntimeException("id nao encontrado"));
-        User sender = userRepository.findById(transaction.getSender()).orElseThrow(() -> new RuntimeException("id nao encontrado"));
+        String tokenFormatado = token.substring(7);
+
+        User sender = userRepository.findByEmail(jwtService.extractUsername(tokenFormatado));
+        User received = userRepository.findByCpf(userService.formataCpf(cpf));
+
+        Transaction transaction = new Transaction();
+        transaction.setSender(sender.getId());
+        transaction.setReceiver(received.getId());
+        transaction.setAmount(balance);
+
 
         if (transaction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("O valor deve ser maior que 0");
@@ -40,7 +51,7 @@ public class TransactionService {
             throw new RuntimeException("Voce nao pode fazer um pix para voce mesmo!");
         }
 
-        receveid.setBalance(receveid.getBalance().add(transaction.getAmount()));
+        received.setBalance(received.getBalance().add(transaction.getAmount()));
         sender.setBalance(sender.getBalance().subtract(transaction.getAmount()));
 
         transactionRepository.save(transaction);
