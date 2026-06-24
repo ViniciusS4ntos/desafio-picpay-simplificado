@@ -7,6 +7,7 @@ import com.vinicius.PicPaySimplificado.infras.entities.Transaction;
 import com.vinicius.PicPaySimplificado.infras.entities.User;
 import com.vinicius.PicPaySimplificado.service.UserService;
 import io.jsonwebtoken.Jwt;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUsuario(@RequestBody UserLoginDTO dto){
+    public ResponseEntity<String> loginUsuario(@RequestBody @Valid UserLoginDTO dto){
         return ResponseEntity.status(200).body(userService.logarUsuario(dto));
     }
 

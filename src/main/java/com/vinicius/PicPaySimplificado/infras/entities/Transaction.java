@@ -32,6 +32,10 @@ public class Transaction {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-
+    public Transaction(Integer sender, Integer receiver, BigDecimal amount) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.amount = amount;
+    }
 
 }

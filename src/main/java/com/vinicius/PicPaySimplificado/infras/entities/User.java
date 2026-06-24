@@ -33,7 +33,7 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private TypeUser typeUser;
+    private TypeUser typeUser = TypeUser.COMMOM;
 
     @OneToMany(mappedBy = "sender")
     @JsonIgnore
