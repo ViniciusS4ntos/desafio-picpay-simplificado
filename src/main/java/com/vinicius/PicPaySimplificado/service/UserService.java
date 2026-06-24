@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -28,31 +29,23 @@ public class UserService {
         // formata cpf
         user.setCpf(formataCpf(user.getCpf()));
 
-        if (userRepository.existsByCpf(user.getCpf())){
-            throw new RuntimeException("Cpf ja existente no banco");
-        }
-
-        if (user.getCpf().length() == 11){
-
-        } else {
-            throw new RuntimeException("Cpf invalido!");
-        }
-
-        if (!emailExistente(user.getEmail())){
-
-            user.setBalance(BigDecimal.ZERO);
-            user.setTypeUser(TypeUser.COMMOM);
-
-            user.setPassword(passwordEncoder.encode(
-                    user.getPassword()
-            ));
-
-            userRepository.save(user);
-
-            return user;
-        } else {
+        // verificar se ja existe o email
+        if (emailExistente(user.getEmail())){
             throw new RuntimeException("Email ja existente no banco!");
         }
+
+        user.setBalance(!Objects.equals(user.getBalance(), BigDecimal.ZERO) ? user.getBalance() : BigDecimal.ZERO);
+        user.setTypeUser(TypeUser.COMMOM);
+
+        user.setPassword(passwordEncoder.encode(
+                user.getPassword()
+        ));
+
+        userRepository.save(user);
+
+        return user;
+
+
     }
 
     public String logarUsuario(UserLoginDTO login){
@@ -93,7 +86,17 @@ public class UserService {
     // Formata CPF
     public String formataCpf(String cpf){
 
-        return cpf.replaceAll("[^0-9]", "");
+        String cpfFormt = cpf.replaceAll("[^0-9]", "");
+
+        if (userRepository.existsByCpf(cpfFormt)){
+            throw new RuntimeException("Cpf ja existente no banco");
+        }
+
+        if (cpfFormt.length() == 11){
+            return cpfFormt;
+        } else {
+            throw new RuntimeException("Cpf invalido!");
+        }
     }
 
     // VERIFICAR email existe no banco

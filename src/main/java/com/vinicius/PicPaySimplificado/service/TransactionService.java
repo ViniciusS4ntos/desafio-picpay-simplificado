@@ -19,21 +19,21 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final UserService userService;
 
     @Transactional
     public Transaction criarTransferencia(String token, BigDecimal balance, String cpf) {
 
         String tokenFormatado = token.substring(7);
+        String cpfFormt = cpf.replaceAll("[^0-9]", "");
 
         User sender = userRepository.findByEmail(jwtService.extractUsername(tokenFormatado));
-        User received = userRepository.findByCpf(userService.formataCpf(cpf));
+        User received = userRepository.findByCpf(cpfFormt);
 
-        Transaction transaction = new Transaction();
-        transaction.setSender(sender.getId());
-        transaction.setReceiver(received.getId());
-        transaction.setAmount(balance);
-
+        Transaction transaction = new Transaction(
+                sender.getId(),
+                received.getId(),
+                balance
+        );
 
         if (transaction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("O valor deve ser maior que 0");
@@ -54,8 +54,11 @@ public class TransactionService {
         received.setBalance(received.getBalance().add(transaction.getAmount()));
         sender.setBalance(sender.getBalance().subtract(transaction.getAmount()));
 
-        transactionRepository.save(transaction);
-        return transaction;
+         Transaction transaction1 =transactionRepository.save(transaction);
+
+        System.out.println("ID da transação: " + transaction1.getId());
+
+        return transaction1;
 
     }
 
