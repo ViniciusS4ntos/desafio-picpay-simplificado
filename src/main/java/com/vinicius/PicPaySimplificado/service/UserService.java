@@ -4,11 +4,11 @@ import com.vinicius.PicPaySimplificado.Controller.dtos.in.UserLoginDTO;
 import com.vinicius.PicPaySimplificado.infras.entities.Transaction;
 import com.vinicius.PicPaySimplificado.infras.entities.User;
 import com.vinicius.PicPaySimplificado.infras.entities.enums.TypeUser;
-import com.vinicius.PicPaySimplificado.infras.repositorys.TransactionRepository;
+import com.vinicius.PicPaySimplificado.infras.exceptions.ArgumentExistsException;
+import com.vinicius.PicPaySimplificado.infras.exceptions.ObjectNotFoundException;
 import com.vinicius.PicPaySimplificado.infras.repositorys.UserRepository;
 import com.vinicius.PicPaySimplificado.infras.security.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class UserService {
 
         // verificar se ja existe o email
         if (emailExistente(user.getEmail())){
-            throw new RuntimeException("Email ja existente no banco!");
+            throw new ArgumentExistsException("Email ja existente no banco!");
         }
 
         user.setBalance(!Objects.equals(user.getBalance(), BigDecimal.ZERO) ? user.getBalance() : BigDecimal.ZERO);
@@ -58,7 +58,7 @@ public class UserService {
         )){
             return jwtService.generateToken(user.getEmail());
         } else {
-            throw new RuntimeException("Erro ao tentar entra na conta: ");
+            throw new ArgumentExistsException("Erro ao tentar entra na conta: ");
         }
     }
 
@@ -70,7 +70,7 @@ public class UserService {
             User user = userRepository.findByEmail(jwtService.extractUsername(tokenFormatado));
             return user.getSentTransactions();
         } catch (RuntimeException e){
-            throw new RuntimeException("Erro ao tentar encontrar usuario: ", e.getCause());
+            throw new ObjectNotFoundException("Erro ao tentar encontrar usuario: ");
         }
     }
 
@@ -89,13 +89,13 @@ public class UserService {
         String cpfFormt = cpf.replaceAll("[^0-9]", "");
 
         if (userRepository.existsByCpf(cpfFormt)){
-            throw new RuntimeException("Cpf ja existente no banco");
+            throw new ArgumentExistsException("Cpf ja existente no banco");
         }
 
         if (cpfFormt.length() == 11){
             return cpfFormt;
         } else {
-            throw new RuntimeException("Cpf invalido!");
+            throw new ArgumentExistsException("Cpf invalido!");
         }
     }
 
