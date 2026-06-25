@@ -1,7 +1,8 @@
-doc Swagger *
-add GolbalHandler *
-
 Antes de finalizar a transferência, deve-se consultar um serviço autorizador
 externo, use este mock
- https://util.devi.tools/api/v2/authorize
- para simular o serviço utilizando o verbo GET; *
+https://util.devi.tools/api/v2/authorize
+para simular o serviço utilizando o verbo GET; *
+
+doc Swagger *
+
+
