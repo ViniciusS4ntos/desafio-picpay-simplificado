@@ -5,11 +5,15 @@ import com.vinicius.PicPaySimplificado.infras.entities.User;
 import com.vinicius.PicPaySimplificado.infras.entities.enums.TypeUser;
 import com.vinicius.PicPaySimplificado.infras.exceptions.BusinessException;
 import com.vinicius.PicPaySimplificado.infras.exceptions.ObjectNotFoundException;
+import com.vinicius.PicPaySimplificado.infras.exceptions.UnauthorizedTransaction;
 import com.vinicius.PicPaySimplificado.infras.repositorys.TransactionRepository;
 import com.vinicius.PicPaySimplificado.infras.repositorys.UserRepository;
 import com.vinicius.PicPaySimplificado.infras.security.JwtService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,6 +25,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final AuthorizationService authorizationService;
 
     @Transactional
     public Transaction criarTransferencia(String token, BigDecimal balance, String cpf) {
@@ -58,6 +63,10 @@ public class TransactionService {
 
         if (transaction.getSender().equals(transaction.getReceiver())){
             throw new BusinessException("Voce nao pode fazer um pix para voce mesmo!");
+        }
+
+        if (!authorizationService.isAuthorized()) {
+            throw new UnauthorizedTransaction("Transferência não autorizada.");
         }
 
         received.setBalance(received.getBalance().add(transaction.getAmount()));

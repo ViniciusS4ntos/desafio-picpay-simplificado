@@ -49,4 +49,17 @@ public class GolbalHandlerException {
         );
         return ResponseEntity.badRequest().body(standardError);
     }
+
+    @ExceptionHandler(UnauthorizedTransaction.class)
+    public ResponseEntity<StandardError> unauthorizedTransaction(UnauthorizedTransaction e,
+                                                                 HttpServletRequest request){
+        StandardError standardError = new StandardError(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(standardError);
+    }
 }

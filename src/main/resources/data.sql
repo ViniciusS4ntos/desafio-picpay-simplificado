@@ -4,7 +4,7 @@ VALUES
     (
         'Vinicius',
         'Santos',
-        '123.124.123-98',
+        '12312412398',
         'vinicius@test.com',
         '123456',
         'COMMOM',
@@ -17,7 +17,7 @@ VALUES
     (
         'Edson',
         'Oliveira',
-        '987.654.321-00',
+        '98765432100',
         'edson@test.com',
         '654321',
         'COMMOM',
@@ -28,9 +28,9 @@ INSERT INTO users
 (first_name, last_name, cpf, email, password, type_user, balance)
 VALUES
     (
-        'jamilton',
+        'Jamilton',
         'Jackson',
-        '987.624.222-00',
+        '98762422200',
         'jamilton@test.com',
         '6222',
         'SELLER',
