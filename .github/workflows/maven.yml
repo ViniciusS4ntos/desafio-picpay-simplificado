@@ -1,23 +1,33 @@
 name: CI
 
 on:
+  # todo push nas ['main', 'develop' e 'feat/*'] ira ativar este pipeline
   push:
     branches: [ "main" , "develop", "feat/*"]
+
+  # toda vez q abrir uma PR esse pipeline sera ativado
   pull_request:
     branches: [ "main", "develop" ]
 
 jobs:
   build:
+  # rodando em um ubuntu 22 LST
+    runs-on: ubuntu-22.04
 
-    runs-on: ubuntu-latest
-
+# Passos
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 21
+    # passo 1: clonando repo
+    - name: clonando repo
+      uses: actions/checkout@v4
+
+    # passo 2: configurando java
+    - name: configurando java
       uses: actions/setup-java@v4
       with:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
+        
+    # passo 3: compilando projeto
+    - name: compilando o projeto
       run: mvn clean package -DskipTests
