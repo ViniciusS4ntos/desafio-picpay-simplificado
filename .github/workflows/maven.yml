@@ -1,8 +1,11 @@
 name: CI
 
 on:
+  # todo push nas ['main', 'develop' e 'feat/*'] ira ativar este pipeline
   push:
     branches: [ "main" , "develop", "feat/*"]
+
+  # toda vez q abrir uma PR esse pipeline sera ativado
   pull_request:
     branches: [ "main", "develop" ]
 
