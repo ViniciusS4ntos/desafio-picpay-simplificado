@@ -26,6 +26,7 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthorizationService authorizationService;
+    private final NotificationService notificationService;
 
     @Transactional
     public Transaction criarTransferencia(String token, BigDecimal balance, String cpf) {
@@ -71,6 +72,10 @@ public class TransactionService {
 
         received.setBalance(received.getBalance().add(transaction.getAmount()));
         sender.setBalance(sender.getBalance().subtract(transaction.getAmount()));
+
+        // Após realizar o débito, crédito e salvar no repositório:
+        notificationService.sendNotification(sender.getEmail(), " Pagamento realizado com sucesso!");
+        notificationService.sendNotification(received.getEmail(), " Você recebeu um pagamento de R$ " + transaction.getAmount());
 
         return transactionRepository.save(transaction);
 
